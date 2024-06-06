@@ -1,0 +1,28 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Test de Lista de Compras
+      id: test-de-lista-de-compras
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 3
+        max-score: 100
+        setup-command: Coding-Academy-ec/listas_tuplas
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TEST-DE-LISTA-DE-COMPRAS_RESULTS: "${{steps.test-de-lista-de-compras.outputs.result}}"
+      with:
+        runners: test-de-lista-de-compras
